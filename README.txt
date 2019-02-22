@@ -5,6 +5,12 @@
  installed and running. It creates slot entries on the discovered
  chassis and attaches the discovered hosts to the slot entries.
 
+ When used in tandem with the VMWare ESXi Discover Agent available
+ in the link below, this provids a solution for full topology RCA
+ in virtualized infrastructures that leverage HP BladeSystem 
+ components, from the Chassis level, to the Blade Server level, to
+ the VMWare ESXi level, and down to the virtual machine level.
+
  This agent has been built using the CiscoSwitchInPerl.pl perl 
  agent structure example.
 
@@ -78,7 +84,7 @@ manually add the call to the HPBladeSystem.stch file as such:
 Configuring the agent
 =====================
 
-To enable the discovery agent, log into the Tivoli Integrated Portal as a user with discovery configuration rights, 
+To enable the discovery agent, log into the IBM DASH interface as a user with discovery configuration rights, 
 and navigate to Discovery->Network Discovery Configuration. Click on the "Full Discovery Agents" tab, and enable the
 "HPBladeSystem" agent.
 
