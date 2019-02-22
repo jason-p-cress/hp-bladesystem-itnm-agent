@@ -1,0 +1,68 @@
+//
+// Stitcher for creating topology connectivity from HP BladeSystem chassis
+// to installed and active blade cards 
+//
+UserDefinedStitcher
+{
+	StitcherTrigger
+	{
+		//
+		// Stitcher is called by the layer 2 layer building
+		// stitchers.
+		//
+	}
+
+	StitcherRules
+	{
+		text layerName = eval(text, '$ARG_1');
+		text agentName = "HPBladeSystem";
+
+		RecordList noConns = RetrieveOQL
+		(
+			"select m_UniqueAddress, m_LocalNbr, m_RemoteNbr
+			from eval(text, '$agentName').returns
+			where
+			(
+				m_RemoteNbr->m_RemoteNbrIpAddr is not NULL
+			);"
+		);
+
+        text uniqueAddress = NULL;
+        text funiqueAddress = NULL;
+        text fName = NULL;
+	text localName = NULL;
+	text intName = NULL;
+	text interfaceId = NULL;
+	text localNbrIfIndex = NULL;
+
+	foreach (noConns)
+	{
+            uniqueAddress = eval(text, '&m_UniqueAddress');
+	    funiqueAddress = eval(text, '&m_RemoteNbr->m_RemoteNbrIpAddr');
+	    localNbrIfIndex = eval(text, '&m_LocalNbr->m_IfIndex');
+
+	    intName = ExecuteStitcher( 'GetEntityName', uniqueAddress, localNbrIfIndex, interfaceId );
+
+	    fName = ExecuteStitcher( 'GetBaseNameByIp', funiqueAddress );
+
+            if ( fName <> "" )
+	    {
+
+                ExecuteOQL(
+                    "insert into fullTopology.entityByNeighbor
+                    (
+                        m_Name, m_NbrName
+                    )
+                    values
+                    (
+                        eval(text, '$intName'),
+                        eval(text, '$fName')
+                    );"
+                );
+	    }
+	}
+	delete(noConns);
+
+   }
+}
+
